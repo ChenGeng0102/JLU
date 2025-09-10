@@ -1,0 +1,18 @@
+1.
+方案一：修改已实现类XCircle的方法名DrawIt为Draw，是否合适？为什么？
+不合适。可能会导致其它依赖于类XCircle的应用不能正常运行，因而要修改所有使用类XCircle的程序。
+方案二：修改抽象类Shape的方法名Draw为DrawIt，是否合适？为什么？
+不合适。如果修改抽象类Shape的的方法名，就要修改所有图形类的方法以及已有的引用。
+方案三：请你给出其它的解决方法。
+使用适配器模式。
+class Triangle :public Shape 
+{
+public:
+   Triangle(XTriangle * ptr):xt(ptr)
+   {   }
+   virtual void Draw ( ) 
+   {  xt-> DrawIt( );  }
+
+private:
+   XTriangle * xt;
+};

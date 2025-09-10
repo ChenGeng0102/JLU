@@ -1,0 +1,191 @@
+1.
+class Box;
+class Role {
+public:
+    Role(int theMoney,int theHP):money(theMoney),hp(theHP) { }
+    virtual ~Role( ) {}
+    int GetMoney( ) const { return money;}
+    void SetMoney(int m) { money = m; }
+    void Open (Box& aBox) { aBox.BeOpened(*this); }
+    virtual void PoisonHurt( ) = 0;
+protected:
+    int money;
+    int hp;
+};
+class Solider:public Role {
+public:
+    Solider(int theMoney,int theHP):Role(theMoney,theHP) { }
+    virtual void PoisonHurt( ) {
+       hp *=0.9;
+       money *=1.2;
+    }
+};
+class Mage:public Role {
+public:
+    Mage (int theMoney,int theHP):Role(theMoney,theHP) { }
+    virtual void PoisonHurt( ) {
+       hp *=0.7;
+       money *=1.4;
+    }
+};
+class Box {
+public:
+   virtual ~Box( ) {}
+   virtual void BeOpened(Role& role) = 0;
+};
+class MoneyBox:public Box {
+public:
+   MoneyBox(int m):boxMoney(m) { }
+   virtual void BeOpened(Role& role) {
+      role.SetMoney(role.GetMoney( ) + boxMoney );
+      boxMoney = 0;
+   }
+protected:
+   int boxMoney; 
+};
+class PoisonBox:public Box {
+public:
+    virtual void BeOpened(Role& role) { role. PoisonHurt ( ); }
+};
+
+2.
+class Fruit
+{
+public:
+    Fruit(int mMax =0,int mMin=0,int mLose = 0,int mW = 0)
+        :mMaxWeight(mMax),mMinWeight(mMin),mLoseWeight(mLose),mWeigth(mW) {}
+    virtual ~Fruit() {}
+
+    virtual Fruit * Clone( ) const = 0;
+    virtual int ReduceWeight( );
+    virtual int  Weight( ) const;
+protected:
+    int   mMaxWeight;
+    int   mMinWeight;
+    int   mLoseWeight;
+    int   mWeight;
+};
+
+int Fruit::ReduceWeight( )
+{
+        int newWeight = mWeight - mLoseWeight;
+        if (newWeight < mMinWeight )
+            newWeight = mMinWeight;
+        int reduce =  mWeight - newWeight;
+        mWeight = newWeight;
+        return reduce;
+}
+
+int  Fruit::Weight( ) const
+{
+  return  mWeight;
+}
+
+class Apple:public Fruit
+{
+public:
+    Apple():Fruit(50,50*3/5,4,50) { }
+    virtual ~Apple( ) {}
+    virtual Apple * Clone() const
+        { return new Apple(*this); }
+
+    // other
+};
+
+class Orange:public Fruit
+{
+public:
+    Orange():Fruit(30,30*3/5,3,30) { }
+    virtual ~Orange( ) {}
+    virtual Orange * Clone() const
+        { return new Orange(*this); }
+
+    // other
+};
+
+class Box
+{
+public:
+    Box():count(0) {for(int i=0;i<8;i++) fruit[i]=0;}
+    ~Box() {for(int i=0;i<8;i++) delete fruit[i];}
+    void AddFruit(Fruit& one)     //放入一个水果
+    {
+
+        if (count<8) 
+          fruit[count++]=one.Clone();
+    }
+
+    int  ApplesNum() const
+    {
+        int num=0;
+        for(int i=0;i<8;i++) {
+            Apple * p=dynamic_cast<Apple *>(fruit[i]);
+            if (p)
+                ++num;
+        }
+        return num;
+    }
+    int  OrangesNum() const
+    {
+        int num=0;
+        for(int i=0;i<8;i++) {
+            Orange * p=dynamic_cast<Orange *>(fruit[i]);
+            if(p)    
+              ++num;
+        }
+        return num;
+    }
+    int  PassOneDay()  //一天来失去的总重量
+    {
+        int num=0;
+        for(int i=0;i<8;i++)
+            if(fruit[i])
+                num+=fruit[i]->ReduceWeight();
+        return num;
+    }
+    int  TotalWeight() const
+    {
+        int num=0;
+        for(int i=0;i<8;i++)
+            if(fruit[i])
+                num+=fruit[i]->Weight();
+        return num;
+    }
+    void Show() const
+    {
+        cout<<"盒子里共有苹果  ="<<ApplesNum()<<endl;
+        cout<<"盒子里共有桔子  ="<<OrangesNum()<<endl;
+        cout<<"一天来共失去重量="<<PassOneDay()<<endl;
+        cout<<"当前水果的总重量="<<TotalWeight()<<endl;
+        cout<<endl;
+    }
+private:
+    Fruit * fruit[8];
+    int     count;
+};
+int main(int argc, char* argv[])
+{
+    Box aBox;
+
+    Apple a1,a2,a3;
+
+    cout<<"第一天放入一个苹果"<<endl;
+    aBox.AddFruit(a1);
+    aBox.Show();
+
+    cout<<"第二天又放入一个苹果"<<endl;
+    aBox.AddFruit(a2);
+    aBox.Show();
+
+    Orange o1,o2;
+    cout<<"第三天又放入两个桔子"<<endl;
+    aBox.AddFruit(o1);
+    aBox.AddFruit(o2);
+    aBox.Show();
+
+    cout<<"第四天又放入一个苹果"<<endl;
+    aBox.AddFruit(a3);
+    aBox.Show();
+
+    return 0;
+}

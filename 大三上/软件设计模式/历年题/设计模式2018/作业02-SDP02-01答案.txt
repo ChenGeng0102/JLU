@@ -1,0 +1,74 @@
+1.
+#include<string>
+#include<iostream>
+using namespace std;
+//抽象产品角色
+class COperation{
+public:
+  int m_nFirst;
+  int m_nSecond;
+  virtual double GetResult(){
+    double dResult = 0;
+    return dResult;
+  }
+};
+//具体产品角色
+class AddOperation :public COperation{
+public:
+  virtual double GetResult(){
+    return m_nFirst + m_nSecond;
+  }
+};
+class SubOperation :public COperation{
+public:
+  virtual double GetResult(){
+    return m_nFirst - m_nSecond;
+  }
+};
+class MultiOperation :public COperation{
+public:
+  virtual double GetResult(){
+    return m_nFirst*m_nSecond;
+  }
+};
+class DiviOperation :public COperation{
+public:
+  virtual double GetResult(){
+    return m_nFirst / m_nSecond;
+  }
+};
+//工厂角色
+class CalculatorFactory{
+public:
+  static COperation* Create(char COperator);
+};
+COperation* CalculatorFactory::Create(char Coperator){
+  COperation *oper;
+  switch (Coperator){
+  case '+':
+    oper = new AddOperation();
+    break;
+  case '-':
+    oper = new SubOperation();
+    break;
+  case '*':
+    oper = new MultiOperation();
+    break;
+  case '/':
+    oper = new DiviOperation();
+    break;
+  default:
+    oper = new AddOperation();
+  }
+  return oper;
+}
+//客户
+int main(){
+  int a, b;
+  cin >> a >> b;
+  COperation *op = CalculatorFactory::Create('-');
+  op->m_nFirst = a;
+  op->m_nSecond = b;
+  cout << op->GetResult() << endl;
+  return 0;
+}

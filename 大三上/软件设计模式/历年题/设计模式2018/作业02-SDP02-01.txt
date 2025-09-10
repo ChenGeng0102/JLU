@@ -1,0 +1,14 @@
+1.小王正在编写一个简单的计算器程序，要求输入两个整数和运算符号(加、减、乘、除)，输出计算结果。小王用面向过程方法编写了下面的代码。请采用面向对象方法通过恰当的设计模式对小王的代码进行重构。
+int main()
+{
+  int numa,numb; char oper; double result;
+  cin>>numa>>numb;  cin>>oper;
+  switch(oper) {
+    case '+': result=numa+numb; break;
+    case '-': result=numa-numb; break;
+    case '*': result=numa*numb; break;
+    case '/': result=numa/(double)numb; break;
+  }
+  cout<<result<<endl;
+  return 0;
+}

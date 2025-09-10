@@ -1,0 +1,88 @@
+1.
+可以采用带有命令队列或宏命令的命令模式。顾客是请求发送者（Invoker），服务员是命令队列（CommandQueue），菜品是命令（Command），不同的菜品是具体命令（ConcreteCommand），厨师则是接收者（Receiver）。参考代码如下：
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+//厨师类
+class Barbucer
+{
+public:
+	void MakeMutton()
+	{
+		cout<<"烤羊肉"<<endl;
+	}
+	void MakeChickenWing()
+	{
+		cout<<"炸鸡翅膀"<<endl;
+	}
+};
+//抽象命令类
+class Command
+{
+protected:
+	Barbucer* receiver;
+public:
+	Command(Barbucer* temp)
+	{
+		receiver = temp;
+	}
+	virtual void ExecuteCmd()=0;
+};
+//烤羊肉命令
+class BakeMuttonCmd : public Command
+{
+public:
+	BakeMuttonCmd(Barbucer* temp) : Command(temp) {}
+	virtual void ExecuteCmd()
+	{
+		receiver->MakeMutton();
+	}
+};
+//炸鸡翅命令
+class ChickenWingCmd : public Command
+{
+public:
+	ChickenWingCmd(Barbucer* temp) : Command(temp) {}
+	virtual void ExecuteCmd()
+	{
+		receiver->MakeChickenWing();
+	}
+};
+//服务员类
+class Waiter
+{
+protected:
+	vector<Command*> m_commandList;
+public:
+	void SetCmd(Command* temp)
+	{
+		m_commandList.push_back(temp);
+		cout<<"增加定单"<<endl;
+	}
+	//通知执行
+	void Notify()
+	{
+		vector<Command*>::iterator p=m_commandList.begin();
+		while(p!=m_commandList.end())
+		{
+			(*p)->ExecuteCmd();
+			p++;
+		}
+	}
+};
+//客户端
+int main()
+{
+	//创建厨师、菜单、服务员等
+	Barbucer* barbucer=new Barbucer();
+	Command* cmd= new BakeMuttonCmd(barbucer);
+	Command* cmd2=new ChickenWingCmd(barbucer);
+	Waiter* girl = new Waiter();
+	//点菜
+	girl->SetCmd(cmd);
+	girl->SetCmd(cmd2);
+	//服务员通知
+	girl->Notify();
+	return 0;
+}
