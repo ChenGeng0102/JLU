@@ -9,7 +9,7 @@
 - 论述题
 
 ### **真题回顾**
-【本部分参考了https://www.cnblogs.com/lycatears/p/18658528，感谢大佬的回忆】
+本部分参考了【https://www.cnblogs.com/lycatears/p/18658528】，感谢大佬的回忆
 #### 选择题（2分*10题=20分）
 - PPT上的基本概念
 
